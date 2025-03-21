@@ -10,7 +10,7 @@ import com.example.booktrack.data.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserViewModel(application: Application): AndroidViewModel(application) {
+class UserViewModel(application: Application, private val userRepository: UserRepository): AndroidViewModel(application) {
 
     val readAllData: LiveData<List<User>>
     private val repository: UserRepository

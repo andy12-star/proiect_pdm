@@ -9,7 +9,12 @@
         android:id="@+id/navigation_my_books"
         android:name="com.example.booktrack.ui.my_books.MyBooksFragment"
         android:label="@string/title_my_books"
-        tools:layout="@layout/fragment_my_books" />
+        tools:layout="@layout/fragment_my_books">
+        <action
+            android:id="@+id/action_navigation_my_books_to_navigation_add_book"
+            app:destination="@id/navigation_add_book" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_search"
@@ -28,4 +33,16 @@
         android:name="com.example.booktrack.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+
+    <fragment
+        android:id="@+id/navigation_add_book"
+        android:name="com.example.booktrack.ui.my_books.add_book.AddBookFragment"
+        android:label="@string/title_add_book"
+        tools:layout="@layout/fragment_add_book">
+        <action
+            android:id="@+id/action_navigation_add_book_to_navigation_my_books"
+            app:destination="@id/navigation_my_books" />
+    </fragment>
+
 </navigation>
