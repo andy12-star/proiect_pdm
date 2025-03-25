@@ -40,7 +40,6 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         imageViewCover = view.findViewById(R.id.imageViewCover)
         buttonUploadCover = view.findViewById(R.id.buttonUploadCover)

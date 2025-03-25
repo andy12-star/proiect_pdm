@@ -44,7 +44,7 @@ private lateinit var userViewModel: UserViewModel
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_my_books, R.id.navigation_my_profile, R.id.navigation_notifications))
+            R.id.navigation_my_books, R.id.navigation_search, R.id.navigation_my_profile, R.id.navigation_notifications))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
