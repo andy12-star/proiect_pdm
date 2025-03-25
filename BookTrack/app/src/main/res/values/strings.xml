@@ -5,16 +5,13 @@
     <string name="title_my_profile">My Profile</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_add_book">Add Book</string>
-    <string-array name="book_genres">
-        <item>Choose a genre</item>
-        <item>Fantasy</item>
-        <item>Romance</item>
-        <item>SF</item>
-        <item>Dystopian</item>
-        <item>Mystery</item>
-        <item>Horror</item>
-        <item>Biography</item>
-        <item>Non-Fiction</item>
-    </string-array>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="no_account">No account? Register</string>
+    <string name="username">Username</string>
+    <string name="Logout">Logout</string>
+    <string name="login_redirect">Already have an account? Login</string>
 
 </resources>

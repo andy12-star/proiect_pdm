@@ -1,22 +1,15 @@
 package com.example.booktrack
 
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.booktrack.data.database.UserDatabase
-import com.example.booktrack.data.models.User
-import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.databinding.ActivityMainBinding
 import com.example.booktrack.data.viewModels.UserViewModel
-import com.example.booktrack.data.viewModels.UserViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +19,13 @@ private lateinit var userViewModel: UserViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-     binding = ActivityMainBinding.inflate(layoutInflater)
+        val username = intent.getStringExtra("username")
+        username?.let {
+            Toast.makeText(this, "Welcome $it!", Toast.LENGTH_SHORT).show()
+        }
+
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
      setContentView(binding.root)
 
 //----------------------partea de testare----------------------
