@@ -1,48 +1,62 @@
 package com.example.booktrack.ui.my_books
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-//import androidx.navigation.fragment.R
 import com.example.booktrack.R
 import androidx.navigation.fragment.findNavController
+import com.example.booktrack.data.database.BookDatabase
+import com.example.booktrack.data.repositories.BookRepository
 import com.example.booktrack.databinding.FragmentMyBooksBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+
 
 class MyBooksFragment : Fragment() {
 
-private var _binding: FragmentMyBooksBinding? = null
-  private val binding get() = _binding!!
+    private var _binding: FragmentMyBooksBinding? = null
+    private val binding get() = _binding!!
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    val myBooksViewModel =
-            ViewModelProvider(this).get(MyBooksViewModel::class.java)
+    private lateinit var myBooksViewModel: MyBooksViewModel
+    private lateinit var bookAdapter: BookAdapter
 
-    _binding = FragmentMyBooksBinding.inflate(inflater, container, false)
-    val root: View = binding.root
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val bookRepository = BookRepository(BookDatabase.getDatabase(requireContext()).bookDao())
+        val viewModelFactory = MyBooksViewModelFactory(bookRepository)
+        myBooksViewModel = ViewModelProvider(this, viewModelFactory).get(MyBooksViewModel::class.java)
 
-      val textView: TextView = binding.textMyBooks
-      myBooksViewModel.text.observe(viewLifecycleOwner) {
-          textView.text = it
-      }
+        _binding = FragmentMyBooksBinding.inflate(inflater, container, false)
+        val root: View = binding.root
 
+        // seteaza adapterul pentru RecyclerView
+        bookAdapter = BookAdapter()
 
-      // Seteaza click pe FloatingActionButton
-      binding.floatingActionButton.setOnClickListener {
-          findNavController().navigate(R.id.action_navigation_my_books_to_navigation_add_book)
-      }
+        binding.recyclerViewBooks.layoutManager = LinearLayoutManager(requireContext())
 
-      return root
-  }
+        binding.recyclerViewBooks.adapter = bookAdapter
 
-override fun onDestroyView() {
+        // observa LiveData pentru actualizarea listei de carti
+        myBooksViewModel.allBooks.observe(viewLifecycleOwner) { books ->
+
+            bookAdapter.submitList(books.toList())
+//            bookAdapter.notifyDataSetChanged()
+        }
+
+        // seteaza click pe FloatingActionButton
+        binding.floatingActionButton.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_my_books_to_navigation_add_book)
+        }
+
+        return root
+    }
+
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }

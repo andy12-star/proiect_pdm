@@ -65,4 +65,8 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
+    implementation(libs.glide)
+    annotationProcessor(libs.glideCompiler)
+
+
 }

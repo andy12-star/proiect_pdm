@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,7 +30,7 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
     private lateinit var editTextAuthor: EditText
 
     private var coverUri: Uri? = null
-    private var selectedCoverResId: Int = R.drawable.hunger_games // Seteaza o coperta default
+    private var selectedCoverResId: Int = R.drawable.hunger_games // seteaza o coperta default
 
 
     private val bookRepository by lazy {
@@ -49,9 +50,6 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
         spinnerGenre = view.findViewById(R.id.spinnerGenre)
         editTextAuthor = view.findViewById(R.id.editTextAuthor)
 
-//        buttonUploadCover.setOnClickListener {
-//            openGallery()
-//        }
         spinnerGenre.setSelection(0, false)
 
 
@@ -62,11 +60,6 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
         buttonAddBook.setOnClickListener {
             saveBookToDatabase()
         }
-    }
-
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_IMAGE_PICK)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -88,18 +81,25 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
             return
         }
 
+        // salveaza numele fisierului
+        val coverImageFileName = when (selectedCoverResId) {
+            R.drawable.hunger_games -> "hunger_games.png"
+            R.drawable.hunger_games_2 -> "hunger_games_2.png"
+            R.drawable.hunger_games_3 -> "hunger_games_3.png"
+            else -> "default_cover.png"
+        }
+
         val book = Book(
             title = title,
             description = description,
             genre = genre,
             author = author,
-            coverImageResId = selectedCoverResId
+            coverImageFileName = coverImageFileName // salveaza numele fisierului
         )
 
         bookViewModel.insertBook(book)
 
         Toast.makeText(requireContext(), "The book has been added!", Toast.LENGTH_SHORT).show()
-//        requireActivity().onBackPressed()
         findNavController().popBackStack(R.id.navigation_my_books, false)
     }
 
@@ -115,7 +115,6 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
         }
         builder.show()
     }
-
 
     companion object {
         private const val REQUEST_IMAGE_PICK = 1001
