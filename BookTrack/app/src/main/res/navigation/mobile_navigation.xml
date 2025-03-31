@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_my_books_to_navigation_add_book"
             app:destination="@id/navigation_add_book" />
+        <action
+            android:id="@+id/action_navigation_my_books_to_navigation_book_info"
+            app:destination="@id/navigation_book_info" />
 
     </fragment>
 
@@ -42,6 +45,16 @@
         tools:layout="@layout/fragment_add_book">
         <action
             android:id="@+id/action_navigation_add_book_to_navigation_my_books"
+            app:destination="@id/navigation_my_books" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_book_info"
+        android:name="com.example.booktrack.ui.my_books.book_info.BookInfoFragment"
+        android:label="@string/title_book_info"
+        tools:layout="@layout/fragment_book_info" >
+        <action
+            android:id="@+id/action_navigation_book_info_to_navigation_my_books"
             app:destination="@id/navigation_my_books" />
     </fragment>
 

@@ -105,7 +105,7 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
 
     private fun showCoverSelectionDialog() {
         val coverImages = listOf(R.drawable.hunger_games, R.drawable.hunger_games_2, R.drawable.hunger_games_3) // AICI TREBUIE SA PUN COPERTILE, de modificat !!!
-        val coverNames = arrayOf("Cover 1", "Cover 2", "Cover 3") // AICI TREBUIE SA PUN COPERTILE, de modificat !!!
+        val coverNames = arrayOf("Hunger Games 1", "Hunger Games 2", "Hunger Games 3") // AICI TREBUIE SA PUN COPERTILE, de modificat !!!
 
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Choose a cover")
