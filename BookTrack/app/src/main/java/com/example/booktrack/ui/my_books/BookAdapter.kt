@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 
-class BookAdapter : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+class BookAdapter(
+    private val onItemClick: (Book) -> Unit
+) : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+
 
     class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.textViewTitle)
@@ -27,7 +30,14 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallba
     }
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
+
+
         val currentBook = getItem(position)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(currentBook)
+        }
+
 
         holder.title.text = currentBook.title
         holder.author.text = currentBook.author

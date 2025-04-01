@@ -39,7 +39,17 @@ class SearchFragment : Fragment() {
 
         val bookDao = AppDatabase.getDatabase(requireContext()).bookDao()
 
-        bookAdapter = BookAdapter()
+        bookAdapter = BookAdapter { selectedBook ->
+            val action = SearchFragmentDirections
+                .actionSearchFragmentToNavigationBookInfo(
+                    title = selectedBook.title,
+                    author = selectedBook.author,
+                    description = selectedBook.description,
+                            coverImageFileName = selectedBook.coverImageFileName
+                )
+            findNavController().navigate(action)
+        }
+
         genreAdapter = GenreAdapter(
             genres = resources.getStringArray(com.example.booktrack.R.array.book_genres).toList().drop(1)
         ) { selectedGenre ->

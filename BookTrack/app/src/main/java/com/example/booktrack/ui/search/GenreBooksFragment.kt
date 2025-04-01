@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.databinding.FragmentGenreBooksBinding
@@ -46,9 +47,20 @@ class GenreBooksFragment : Fragment() {
         val bookDao = AppDatabase.getDatabase(requireContext()).bookDao()
         lifecycleScope.launch {
             val books = bookDao.getBooksByGenre(genre)
-            binding.recyclerViewBooks.adapter = BookAdapter().apply {
+            binding.recyclerViewBooks.adapter = BookAdapter { selectedBook ->
+                val action = GenreBooksFragmentDirections
+                    .actionGenreBooksFragmentToNavigationBookInfo(
+                        title = selectedBook.title,
+                        author = selectedBook.author,
+                        description = selectedBook.description,
+                        coverImageFileName = selectedBook.coverImageFileName // ✅
+                    )
+
+                findNavController().navigate(action)
+            }.apply {
                 submitList(books)
             }
+
         }
     }
 
