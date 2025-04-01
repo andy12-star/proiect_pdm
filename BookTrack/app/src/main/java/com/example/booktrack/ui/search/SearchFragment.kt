@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.example.booktrack.databinding.FragmentNotificationsBinding
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.booktrack.R
 import com.example.booktrack.databinding.FragmentSearchBinding
-import com.example.booktrack.ui.notifications.NotificationsViewModel
+import kotlinx.coroutines.launch
 
-class SearchFragment: Fragment() {
-private var _binding: FragmentSearchBinding? = null
+class SearchFragment : Fragment() {
 
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -21,17 +22,27 @@ private var _binding: FragmentSearchBinding? = null
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val searchViewModel =
-            ViewModelProvider(this).get(SearchViewModel::class.java)
-
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textSearch
-        searchViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//
+//        val bookDao = AppDatabase.getDatabase(requireContext()).bookDao()
+
+        binding.recyclerViewGenres.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        lifecycleScope.launch {
+            val genres = resources.getStringArray(R.array.book_genres).toList()
+                .drop(1)
+            binding.recyclerViewGenres.adapter = GenreAdapter(genres) { selectedGenre ->
+                val action = SearchFragmentDirections
+                    .actionSearchFragmentToGenreBooksFragment(selectedGenre)
+                findNavController().navigate(action)
+            }
+
         }
-        return root
     }
 
     override fun onDestroyView() {

@@ -23,7 +23,12 @@
         android:id="@+id/navigation_search"
         android:name="com.example.booktrack.ui.search.SearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_genreBooksFragment"
+            app:destination="@id/genreBooksFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/navigation_my_profile"
@@ -57,5 +62,17 @@
             android:id="@+id/action_navigation_book_info_to_navigation_my_books"
             app:destination="@id/navigation_my_books" />
     </fragment>
+
+    <fragment
+        android:id="@+id/genreBooksFragment"
+        android:name="com.example.booktrack.ui.search.GenreBooksFragment"
+        android:label="Books by Genre"
+        tools:layout="@layout/fragment_genre_books">
+
+        <argument
+            android:name="genre"
+            app:argType="string" />
+    </fragment>
+
 
 </navigation>
