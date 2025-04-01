@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.booktrack.R
 import androidx.navigation.fragment.findNavController
-import com.example.booktrack.data.database.BookDatabase
+import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.data.repositories.BookRepository
 import com.example.booktrack.databinding.FragmentMyBooksBinding
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +27,7 @@ class MyBooksFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val bookRepository = BookRepository(BookDatabase.getDatabase(requireContext()).bookDao())
+        val bookRepository = BookRepository(AppDatabase.getDatabase(requireContext()).bookDao())
         val viewModelFactory = MyBooksViewModelFactory(bookRepository)
         myBooksViewModel = ViewModelProvider(this, viewModelFactory).get(MyBooksViewModel::class.java)
 

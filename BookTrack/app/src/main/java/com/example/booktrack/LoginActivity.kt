@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.booktrack.data.database.UserDatabase
+import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.ActivityLoginBinding
@@ -32,7 +32,7 @@ class LoginActivity:AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userDao = UserDatabase.getDatabase(application).userDao()
+        val userDao = AppDatabase.getDatabase(application).userDao()
         val repository = UserRepository(userDao)
         userViewModel = UserViewModel(application, repository)
 

@@ -14,7 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.booktrack.R
-import com.example.booktrack.data.database.BookDatabase
+import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.data.models.Book
 import com.example.booktrack.data.repositories.BookRepository
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class AddBookFragment : Fragment(R.layout.fragment_add_book) {
 
 
     private val bookRepository by lazy {
-        BookRepository(BookDatabase.getDatabase(requireContext()).bookDao())
+        BookRepository(AppDatabase.getDatabase(requireContext()).bookDao())
     }
     private val bookViewModel: AddBookViewModel by viewModels {
         AddBookViewModelFactory(bookRepository)

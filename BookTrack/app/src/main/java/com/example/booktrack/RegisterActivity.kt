@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.booktrack.data.database.AppDatabase
 // import androidx.appcompat.widget.LinearLayoutCompat
-import com.example.booktrack.data.database.UserDatabase
 import com.example.booktrack.data.models.User
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
@@ -24,7 +24,7 @@ class RegisterActivity :AppCompatActivity(){
         setContentView(binding.root)
 
         // Inițializare ViewModel
-        val userDao = UserDatabase.getDatabase(application).userDao()
+        val userDao = AppDatabase.getDatabase(application).userDao()
         val repository = UserRepository(userDao)
         userViewModel = UserViewModel(application, repository)
 
