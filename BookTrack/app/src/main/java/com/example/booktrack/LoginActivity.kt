@@ -10,6 +10,8 @@ import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
+import com.example.booktrack.utils.HashUtils
+
 
 class LoginActivity:AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -58,12 +60,14 @@ class LoginActivity:AppCompatActivity() {
             }
 
             lifecycleScope.launch {
-                val user = userViewModel.login(email, password)
+                val hashedPassword = HashUtils.sha256(password)
+                val user = userViewModel.login(email, hashedPassword)
+
                 if (user != null) {
                     Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     intent.putExtra("username", user.username)
-                    // salvam ca s-a logat
+
                     with(sharedPref.edit()) {
                         putBoolean("is_logged_in", true)
                         putString("username", user.username)
