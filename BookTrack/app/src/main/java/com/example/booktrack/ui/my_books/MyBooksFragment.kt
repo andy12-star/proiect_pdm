@@ -35,7 +35,18 @@ class MyBooksFragment : Fragment() {
         val root: View = binding.root
 
         // seteaza adapterul pentru RecyclerView
-        bookAdapter = BookAdapter()
+        bookAdapter = BookAdapter { selectedBook ->
+            val action = MyBooksFragmentDirections
+                .actionNavigationMyBooksToNavigationBookInfo(
+                    title = selectedBook.title,
+                    author = selectedBook.author,
+                    description = selectedBook.description,
+                    coverImageFileName = selectedBook.coverImageFileName // 🟢 adăugat
+                )
+
+            findNavController().navigate(action)
+        }
+
 
         binding.recyclerViewBooks.layoutManager = LinearLayoutManager(requireContext())
 

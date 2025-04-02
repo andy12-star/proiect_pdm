@@ -23,7 +23,16 @@
         android:id="@+id/navigation_search"
         android:name="com.example.booktrack.ui.search.SearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_genreBooksFragment"
+            app:destination="@id/genreBooksFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_navigation_book_info"
+            app:destination="@id/navigation_book_info" />
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/navigation_my_profile"
@@ -51,11 +60,30 @@
     <fragment
         android:id="@+id/navigation_book_info"
         android:name="com.example.booktrack.ui.my_books.book_info.BookInfoFragment"
-        android:label="@string/title_book_info"
-        tools:layout="@layout/fragment_book_info" >
-        <action
-            android:id="@+id/action_navigation_book_info_to_navigation_my_books"
-            app:destination="@id/navigation_my_books" />
+        android:label="Book Info"
+        tools:layout="@layout/fragment_book_info">
+
+        <argument android:name="title" app:argType="string" />
+        <argument android:name="author" app:argType="string" />
+        <argument android:name="description" app:argType="string" />
+        <argument android:name="coverImageFileName" app:argType="string" />
+
     </fragment>
+
+
+    <fragment
+        android:id="@+id/genreBooksFragment"
+        android:name="com.example.booktrack.ui.search.GenreBooksFragment"
+        android:label="Books by Genre"
+        tools:layout="@layout/fragment_genre_books">
+
+        <argument
+            android:name="genre"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_genreBooksFragment_to_navigation_book_info"
+            app:destination="@id/navigation_book_info" />
+    </fragment>
+
 
 </navigation>
