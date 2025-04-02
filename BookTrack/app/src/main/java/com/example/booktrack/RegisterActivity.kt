@@ -24,6 +24,8 @@ class RegisterActivity :AppCompatActivity(){
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
+
         // Inițializare ViewModel
         val userDao = AppDatabase.getDatabase(application).userDao()
         val repository = UserRepository(userDao)
@@ -66,6 +68,14 @@ class RegisterActivity :AppCompatActivity(){
 
 
             userViewModel.addUser(user)
+
+            sharedPref.edit().apply {
+                putString("username", username)
+                putString("email", email)
+                putBoolean("is_logged_in", true)
+                apply()
+            }
+
 
             Toast.makeText(this, "User registered!", Toast.LENGTH_SHORT).show()
             val goToLogin = TextView(this).apply {

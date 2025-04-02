@@ -22,4 +22,11 @@ val readAllData: LiveData<List<User>> = userRepository.readAllData
         return userRepository.login(email, password)
     }
 
+    fun updateUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.updateUser(user)
+        }
+    }
+
+
 }
