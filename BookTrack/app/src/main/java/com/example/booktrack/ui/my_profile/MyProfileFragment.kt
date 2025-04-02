@@ -6,16 +6,19 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.booktrack.LoginActivity
+import com.example.booktrack.R
 import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.FragmentMyProfileBinding
+import com.example.booktrack.utils.HashUtils
 import kotlinx.coroutines.launch
 
 class MyProfileFragment : Fragment() {
@@ -41,6 +44,41 @@ class MyProfileFragment : Fragment() {
         val userRepository = UserRepository(userDao)
         val userViewModel = UserViewModel(requireActivity().application, userRepository)
 
+         fun showChangePasswordDialog(userViewModel: UserViewModel) {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_change_password, null)
+            val oldPass = dialogView.findViewById<EditText>(R.id.editOldPassword)
+            val newPass = dialogView.findViewById<EditText>(R.id.editNewPassword)
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("Change Password")
+                .setView(dialogView)
+                .setPositiveButton("Save") { _, _ ->
+                    val oldPassword = oldPass.text.toString().trim()
+                    val newPassword = newPass.text.toString().trim()
+
+                    if (oldPassword.isBlank() || newPassword.isBlank()) {
+                        Toast.makeText(requireContext(), "All fields required", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
+                    val email = sharedPref.getString("email", "") ?: return@setPositiveButton
+
+                    lifecycleScope.launch {
+                        val userDao = AppDatabase.getDatabase(requireContext()).userDao()
+                        val user = userDao.getUserByEmail(email)
+
+                        if (user != null && user.password == HashUtils.sha256(oldPassword)) {
+                            val updatedUser = user.copy(password = HashUtils.sha256(newPassword))
+                            userViewModel.updateUser(updatedUser)
+                            Toast.makeText(requireContext(), "Password updated!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Old password incorrect", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
 
         sharedPref = requireContext().getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
 
@@ -55,7 +93,7 @@ class MyProfileFragment : Fragment() {
         }
 
         binding.btnChangePassword.setOnClickListener {
-            // Aici poți face navigare către un fragment de schimbare a parolei sau un dialog
+            showChangePasswordDialog(userViewModel)
         }
 
 
@@ -149,4 +187,6 @@ class MyProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }
