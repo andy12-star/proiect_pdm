@@ -13,6 +13,7 @@ import com.example.booktrack.data.models.User
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.ActivityRegisterBinding
+import com.example.booktrack.utils.HashUtils
 
 class RegisterActivity :AppCompatActivity(){
     private lateinit var binding: ActivityRegisterBinding
@@ -53,14 +54,16 @@ class RegisterActivity :AppCompatActivity(){
                 return@setOnClickListener
             }
 
+            val hashedPassword = HashUtils.sha256(password)
 
             val user = User(
                 id = 0,
                 role = "user",
                 username = username,
                 email = email,
-                password = password
+                password = hashedPassword
             )
+
 
             userViewModel.addUser(user)
 

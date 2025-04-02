@@ -15,4 +15,10 @@ interface BookDao {
     @Query("SELECT * FROM book_table")
     fun getAllBooks(): Flow<List<Book>>
 
+    @Query("SELECT * FROM book_table WHERE genre = :genre")
+    suspend fun getBooksByGenre(genre: String): List<Book>
+
+//    @Query("SELECT DISTINCT genre FROM book_table ORDER BY genre ASC")
+//    suspend fun getAllGenres(): List<String>
+
 }

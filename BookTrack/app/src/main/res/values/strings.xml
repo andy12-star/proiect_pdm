@@ -25,4 +25,5 @@
         <item>Biography</item>
         <item>Non-Fiction</item>
     </string-array>
+    <string name="search">Search by title or author</string>
 </resources>
