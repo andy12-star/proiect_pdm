@@ -71,6 +71,7 @@ class LoginActivity:AppCompatActivity() {
                     with(sharedPref.edit()) {
                         putBoolean("is_logged_in", true)
                         putString("username", user.username)
+                        putString("email", user.email)
                         apply()
                     }
 
@@ -82,6 +83,7 @@ class LoginActivity:AppCompatActivity() {
                 }
             }
         }
+
 
         // Navigare către RegisterActivity
         binding.tvGoToRegister.setOnClickListener {

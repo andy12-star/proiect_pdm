@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.booktrack.data.models.User
 
 @Dao
@@ -18,5 +19,11 @@ interface UserDao {
 
     @Query("SELECT * FROM user_table WHERE email = :email AND password = :password")
     suspend fun login(email: String, password: String): User?
+
+    @Update
+    suspend fun updateUser(user: User)
+
+    @Query("SELECT * FROM user_table WHERE email = :email LIMIT 1")
+    suspend fun getUserByEmail(email: String): User?
 
 }

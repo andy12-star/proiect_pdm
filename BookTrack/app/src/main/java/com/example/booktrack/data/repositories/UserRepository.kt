@@ -16,4 +16,8 @@ class UserRepository(private val userDao: UserDao) {
         return userDao.login(email, password)
     }
 
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
 }
