@@ -26,15 +26,27 @@ class MyProfileFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val myProfileViewModel: MyProfileViewModel by viewModels()
+        val sharedPref = requireContext().getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
+        val username = sharedPref.getString("username", "N/A") ?: "N/A"
+        val email = sharedPref.getString("email", "N/A") ?: "N/A"
 
+        binding.textUsername.text = "Username - $username"
+        binding.textEmail.text = "Mail - $email"
 
-        val textView: TextView = binding.textMyProfile
-        myProfileViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.btnEditUsername.setOnClickListener {
+            // poți deschide un dialog aici
+        }
+
+        binding.btnEditEmail.setOnClickListener {
+            // la fel, dialog pentru editare
+        }
+
+        binding.btnChangePassword.setOnClickListener {
+            // navighează sau deschide dialog pentru schimbarea parolei
         }
 
         // logout
