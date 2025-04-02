@@ -71,6 +71,18 @@ class MyProfileFragment : Fragment() {
             showChangePasswordDialog(userViewModel)
         }
 
+        binding.btnDeleteAccount.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete your account?")
+                .setPositiveButton("Yes") { _, _ ->
+                    deleteUserAccount()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.profile_menu, menu)
@@ -102,6 +114,36 @@ class MyProfileFragment : Fragment() {
         binding.textUsername.text = "Username - $username"
         binding.textEmail.text = "Mail - $email"
     }
+
+    private fun deleteUserAccount() {
+        val email = sharedPref.getString("email", null)
+
+        if (email.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Email not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(requireContext())
+            val userDao = db.userDao()
+
+            val user = userDao.getUserByEmail(email)
+            if (user != null) {
+                userDao.delete(user)
+            }
+
+            sharedPref.edit {
+                clear()
+                apply()
+            }
+
+            Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+    }
+
 
     private fun showEditDialog(
         title: String,
@@ -165,6 +207,8 @@ class MyProfileFragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
+
 
     private fun showChangePasswordDialog(userViewModel: UserViewModel) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_change_password, null)

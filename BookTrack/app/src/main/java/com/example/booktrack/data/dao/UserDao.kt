@@ -2,6 +2,7 @@ package com.example.booktrack.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -25,5 +26,12 @@ interface UserDao {
 
     @Query("SELECT * FROM user_table WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): User?
+
+    @Delete
+    suspend fun delete(user: User)
+
+    // (opțional) dacă vrei să ștergi după email direct:
+    @Query("DELETE FROM user_table WHERE email = :email")
+    suspend fun deleteByEmail(email: String)
 
 }
