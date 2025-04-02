@@ -5,15 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.booktrack.data.dao.BookDao
+import com.example.booktrack.data.dao.NotificationDao
 import com.example.booktrack.data.dao.UserDao
 import com.example.booktrack.data.models.Book
+import com.example.booktrack.data.models.Notification
 import com.example.booktrack.data.models.User
 
-@Database(entities = [Book::class, User::class], version = 2)
+@Database(entities = [Book::class, User::class, Notification::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun bookDao(): BookDao
     abstract fun userDao(): UserDao
+    abstract fun notificationDao(): NotificationDao
 
     companion object {
         @Volatile
