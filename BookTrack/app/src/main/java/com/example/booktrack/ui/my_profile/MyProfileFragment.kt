@@ -1,5 +1,6 @@
 package com.example.booktrack.ui.my_profile
 
+import NotificationViewModel
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -11,11 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.booktrack.LoginActivity
 import com.example.booktrack.R
 import com.example.booktrack.data.database.AppDatabase
+import com.example.booktrack.data.models.Notification
+import com.example.booktrack.data.repositories.NotificationRepository
 import com.example.booktrack.data.repositories.UserRepository
+import com.example.booktrack.data.viewModels.NotificationViewModelFactory
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.FragmentMyProfileBinding
 import com.example.booktrack.utils.HashUtils
@@ -27,6 +32,7 @@ class MyProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var sharedPref: android.content.SharedPreferences
+    private lateinit var notificationViewModel: NotificationViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,72 +46,51 @@ class MyProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val notificationDao = AppDatabase.getDatabase(requireContext()).notificationDao()
+        val notificationRepo = NotificationRepository(notificationDao)
+        val notificationFactory = NotificationViewModelFactory(requireActivity().application, notificationRepo)
+        notificationViewModel = ViewModelProvider(this, notificationFactory)[NotificationViewModel::class.java]
+
         val userDao = AppDatabase.getDatabase(requireContext()).userDao()
         val userRepository = UserRepository(userDao)
         val userViewModel = UserViewModel(requireActivity().application, userRepository)
-
-         fun showChangePasswordDialog(userViewModel: UserViewModel) {
-            val dialogView = layoutInflater.inflate(R.layout.dialog_change_password, null)
-            val oldPass = dialogView.findViewById<EditText>(R.id.editOldPassword)
-            val newPass = dialogView.findViewById<EditText>(R.id.editNewPassword)
-
-            AlertDialog.Builder(requireContext())
-                .setTitle("Change Password")
-                .setView(dialogView)
-                .setPositiveButton("Save") { _, _ ->
-                    val oldPassword = oldPass.text.toString().trim()
-                    val newPassword = newPass.text.toString().trim()
-
-                    if (oldPassword.isBlank() || newPassword.isBlank()) {
-                        Toast.makeText(requireContext(), "All fields required", Toast.LENGTH_SHORT).show()
-                        return@setPositiveButton
-                    }
-
-                    val email = sharedPref.getString("email", "") ?: return@setPositiveButton
-
-                    lifecycleScope.launch {
-                        val userDao = AppDatabase.getDatabase(requireContext()).userDao()
-                        val user = userDao.getUserByEmail(email)
-
-                        if (user != null && user.password == HashUtils.sha256(oldPassword)) {
-                            val updatedUser = user.copy(password = HashUtils.sha256(newPassword))
-                            userViewModel.updateUser(updatedUser)
-                            Toast.makeText(requireContext(), "Password updated!", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(requireContext(), "Old password incorrect", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
-        }
 
         sharedPref = requireContext().getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
 
         updateUserData()
 
         binding.btnEditUsername.setOnClickListener {
-            showEditDialog("Edit Username", "username", binding.textUsername, "Username")
+            showEditDialog("Edit Username", "username", binding.textUsername, "Username", userViewModel)
         }
 
         binding.btnEditEmail.setOnClickListener {
-            showEditDialog("Edit Email", "email", binding.textEmail, "Mail")
+            showEditDialog("Edit Email", "email", binding.textEmail, "Mail", userViewModel)
         }
 
         binding.btnChangePassword.setOnClickListener {
             showChangePasswordDialog(userViewModel)
         }
 
+        binding.btnDeleteAccount.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to delete your account?")
+                .setPositiveButton("Yes") { _, _ ->
+                    deleteUserAccount()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
 
-        // Logout
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(com.example.booktrack.R.menu.profile_menu, menu)
+                menuInflater.inflate(R.menu.profile_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    com.example.booktrack.R.id.action_logout -> {
+                    R.id.action_logout -> {
                         sharedPref.edit {
                             clear()
                             apply()
@@ -130,11 +115,42 @@ class MyProfileFragment : Fragment() {
         binding.textEmail.text = "Mail - $email"
     }
 
+    private fun deleteUserAccount() {
+        val email = sharedPref.getString("email", null)
+
+        if (email.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Email not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(requireContext())
+            val userDao = db.userDao()
+
+            val user = userDao.getUserByEmail(email)
+            if (user != null) {
+                userDao.delete(user)
+            }
+
+            sharedPref.edit {
+                clear()
+                apply()
+            }
+
+            Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+    }
+
+
     private fun showEditDialog(
         title: String,
         key: String,
         targetTextView: TextView,
-        label: String
+        label: String,
+        userViewModel: UserViewModel
     ) {
         val input = EditText(requireContext())
         input.setText(sharedPref.getString(key, ""))
@@ -151,7 +167,6 @@ class MyProfileFragment : Fragment() {
                         apply()
                     }
 
-                    // actualizare în baza de date
                     lifecycleScope.launch {
                         val currentEmail = sharedPref.getString("email", "") ?: return@launch
                         val userDao = AppDatabase.getDatabase(requireContext()).userDao()
@@ -162,16 +177,27 @@ class MyProfileFragment : Fragment() {
                                 "username" -> user.copy(username = newValue)
                                 "email" -> {
                                     sharedPref.edit {
-                                        putString("email", newValue) // update și în SharedPrefs
+                                        putString("email", newValue)
                                     }
                                     user.copy(email = newValue)
                                 }
                                 else -> user
                             }
 
-                            val userRepository = UserRepository(userDao)
-                            val userViewModel = UserViewModel(requireActivity().application, userRepository)
                             userViewModel.updateUser(updatedUser)
+
+                            val notificationMsg = when (key) {
+                                "username" -> "Username-ul a fost schimbat în $newValue"
+                                "email" -> "Emailul a fost schimbat în $newValue"
+                                else -> ""
+                            }
+
+                            notificationViewModel.insertNotification(
+                                Notification(
+                                    title = "Profil actualizat",
+                                    message = notificationMsg
+                                )
+                            )
                         }
                     }
 
@@ -183,10 +209,52 @@ class MyProfileFragment : Fragment() {
     }
 
 
+
+    private fun showChangePasswordDialog(userViewModel: UserViewModel) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_change_password, null)
+        val oldPass = dialogView.findViewById<EditText>(R.id.editOldPassword)
+        val newPass = dialogView.findViewById<EditText>(R.id.editNewPassword)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Change Password")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val oldPassword = oldPass.text.toString().trim()
+                val newPassword = newPass.text.toString().trim()
+
+                if (oldPassword.isBlank() || newPassword.isBlank()) {
+                    Toast.makeText(requireContext(), "All fields required", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val email = sharedPref.getString("email", "") ?: return@setPositiveButton
+
+                lifecycleScope.launch {
+                    val userDao = AppDatabase.getDatabase(requireContext()).userDao()
+                    val user = userDao.getUserByEmail(email)
+
+                    if (user != null && user.password == HashUtils.sha256(oldPassword)) {
+                        val updatedUser = user.copy(password = HashUtils.sha256(newPassword))
+                        userViewModel.updateUser(updatedUser)
+                        Toast.makeText(requireContext(), "Password updated!", Toast.LENGTH_SHORT).show()
+
+                        notificationViewModel.insertNotification(
+                            Notification(
+                                title = "Parolă schimbată",
+                                message = "Parola a fost actualizată cu succes."
+                            )
+                        )
+                    } else {
+                        Toast.makeText(requireContext(), "Old password incorrect", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }
