@@ -72,6 +72,7 @@ class LoginActivity:AppCompatActivity() {
                         putBoolean("is_logged_in", true)
                         putString("username", user.username)
                         putString("email", user.email)
+                        putInt("user_id", user.id)
                         apply()
                     }
 

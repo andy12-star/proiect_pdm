@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.booktrack.R
 import com.example.booktrack.databinding.FragmentBookInfoBinding
+import androidx.navigation.fragment.findNavController
 
 class BookInfoFragment : Fragment() {
 
@@ -60,8 +61,13 @@ class BookInfoFragment : Fragment() {
                 .load(R.drawable.ic_launcher_foreground)
                 .into(binding.imageViewCover)
         }
-    }
 
+        binding.btnAddReview.setOnClickListener {
+            // navigheaza la CreateReviewFragment
+            val action = BookInfoFragmentDirections.actionNavigationBookInfoToNavigationCreateReview(title)
+            findNavController().navigate(action)
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

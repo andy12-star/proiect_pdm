@@ -36,13 +36,25 @@
             android:textSize="16sp"
             android:layout_marginBottom="16dp" />
 
+        <Button
+            android:id="@+id/btnAddReview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Review"
+            app:layout_constraintTop_toTopOf="@id/textViewAuthor"
+            app:layout_constraintBottom_toBottomOf="@id/textViewDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="@color/purple_700"
+            android:textColor="@android:color/white"/>
+
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#444444"
-            android:lineSpacingExtra="4dp" />
+            android:lineSpacingExtra="4dp"
+            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 </ScrollView>

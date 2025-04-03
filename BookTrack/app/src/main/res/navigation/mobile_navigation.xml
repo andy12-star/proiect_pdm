@@ -67,9 +67,11 @@
         <argument android:name="author" app:argType="string" />
         <argument android:name="description" app:argType="string" />
         <argument android:name="coverImageFileName" app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_book_info_to_navigation_create_review"
+            app:destination="@id/navigation_create_review" />
 
     </fragment>
-
 
     <fragment
         android:id="@+id/genreBooksFragment"
@@ -82,6 +84,21 @@
             app:argType="string" />
         <action
             android:id="@+id/action_genreBooksFragment_to_navigation_book_info"
+            app:destination="@id/navigation_book_info" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_create_review"
+        android:name="com.example.booktrack.ui.my_books.reviews.CreateReviewFragment"
+        android:label="@string/title_create_review"
+        tools:layout="@layout/fragment_create_review">
+        <argument
+            android:name="bookTitle"
+            app:argType="string"
+            android:defaultValue="" />
+
+        <action
+            android:id="@+id/action_navigation_create_review_to_navigation_book_info"
             app:destination="@id/navigation_book_info" />
     </fragment>
 
