@@ -1,21 +1,17 @@
 package com.example.booktrack
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-// import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.booktrack.data.database.AppDatabase
-// import androidx.appcompat.widget.LinearLayoutCompat
 import com.example.booktrack.data.models.User
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.ActivityRegisterBinding
 import com.example.booktrack.utils.HashUtils
 
-class RegisterActivity :AppCompatActivity(){
+class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var userViewModel: UserViewModel
 
@@ -23,8 +19,6 @@ class RegisterActivity :AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
 
         // Inițializare ViewModel
         val userDao = AppDatabase.getDatabase(application).userDao()
@@ -66,30 +60,13 @@ class RegisterActivity :AppCompatActivity(){
                 password = hashedPassword
             )
 
-
             userViewModel.addUser(user)
 
-            sharedPref.edit().apply {
-                putString("username", username)
-                putString("email", email)
-                putBoolean("is_logged_in", true)
-                apply()
-            }
+            Toast.makeText(this, "User registered! Please login.", Toast.LENGTH_SHORT).show()
 
-
-            Toast.makeText(this, "User registered!", Toast.LENGTH_SHORT).show()
-            val goToLogin = TextView(this).apply {
-                text = getString(R.string.login_redirect)
-                setTextColor(Color.BLUE)
-                setPadding(0, 32, 0, 0)
-            }
-            binding.registerLayout.addView(goToLogin)
-
-            goToLogin.setOnClickListener {
-                startActivity(Intent(this, LoginActivity::class.java))
-            }
-
+            // Navigare spre LoginActivity
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }
     }
-
 }

@@ -14,6 +14,7 @@ import com.example.booktrack.data.models.Review
 import com.example.booktrack.data.models.User
 
 @Database(entities = [Book::class, User::class, Review::class, Notification::class], version = 1)
+// andreea modif in 2!!!!1
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun bookDao(): BookDao
