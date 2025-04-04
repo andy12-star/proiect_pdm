@@ -36,16 +36,34 @@
             android:textSize="16sp"
             android:layout_marginBottom="16dp" />
 
-        <Button
-            android:id="@+id/btnAddReview"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Review"
-            app:layout_constraintTop_toTopOf="@id/textViewAuthor"
-            app:layout_constraintBottom_toBottomOf="@id/textViewDescription"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:backgroundTint="@color/purple_700"
-            android:textColor="@android:color/white"/>
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnAddReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Review"
+                app:layout_constraintTop_toTopOf="@id/textViewAuthor"
+                app:layout_constraintBottom_toBottomOf="@id/textViewDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                android:backgroundTint="@color/purple_700"
+                android:textColor="@android:color/white"/>
+
+            <Button
+                android:id="@+id/btnSeeBookReviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See Reviews"
+                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toTopOf="@+id/btnAddReview"
+                app:layout_constraintBottom_toBottomOf="@+id/btnAddReview"
+                app:layout_constraintStart_toEndOf="@id/btnAddReview"
+                android:backgroundTint="@color/purple_700"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewDescription"

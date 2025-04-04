@@ -67,6 +67,11 @@ class BookInfoFragment : Fragment() {
             val action = BookInfoFragmentDirections.actionNavigationBookInfoToNavigationCreateReview(title)
             findNavController().navigate(action)
         }
+
+        binding.btnSeeBookReviews.setOnClickListener {
+            val action = BookInfoFragmentDirections.actionNavigationBookInfoToNavigationBookReviews(title)
+            findNavController().navigate(action)
+        }
     }
 
     override fun onDestroyView() {

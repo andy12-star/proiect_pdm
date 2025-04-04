@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.booktrack.data.models.Review
+import com.example.booktrack.data.models.ReviewWithUser
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,6 +20,10 @@ interface ReviewDao {
 
     @Query("SELECT * FROM review_table WHERE userId = :userId")
     fun getReviewsForUser(userId: Int): Flow<List<Review>>
+
+    @Transaction
+    @Query("SELECT * FROM review_table WHERE bookId = :bookId")
+    suspend fun getReviewsWithUsers(bookId: Int): List<ReviewWithUser>
 
     @Delete
     suspend fun delete(review: Review)

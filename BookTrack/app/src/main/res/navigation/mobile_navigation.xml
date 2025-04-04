@@ -70,6 +70,9 @@
         <action
             android:id="@+id/action_navigation_book_info_to_navigation_create_review"
             app:destination="@id/navigation_create_review" />
+        <action
+            android:id="@+id/action_navigation_book_info_to_navigation_book_reviews"
+            app:destination="@id/navigation_book_reviews" />
 
     </fragment>
 
@@ -99,6 +102,21 @@
 
         <action
             android:id="@+id/action_navigation_create_review_to_navigation_book_info"
+            app:destination="@id/navigation_book_info" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_book_reviews"
+        android:name="com.example.booktrack.ui.my_books.reviews.BookReviewsFragment"
+        android:label="@string/title_all_reviews"
+        tools:layout="@layout/fragment_book_reviews">
+        <argument
+            android:name="bookTitle"
+            app:argType="string"
+            android:defaultValue="" />
+
+        <action
+            android:id="@+id/action_navigation_book_reviews_to_navigation_book_info"
             app:destination="@id/navigation_book_info" />
     </fragment>
 
