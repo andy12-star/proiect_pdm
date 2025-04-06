@@ -24,6 +24,9 @@ interface BookDao {
     @Query("SELECT * FROM book_table WHERE id = :bookId LIMIT 1")
     suspend fun getBookById(bookId: Int): Book?
 
+    @Query("SELECT id FROM book_table WHERE title = :title LIMIT 1")
+    suspend fun getBookIdByTitle(title: String): Int
+
 //    @Query("SELECT DISTINCT genre FROM book_table ORDER BY genre ASC")
 //    suspend fun getAllGenres(): List<String>
 

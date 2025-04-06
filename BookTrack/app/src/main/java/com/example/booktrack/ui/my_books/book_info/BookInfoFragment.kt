@@ -5,10 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.booktrack.R
 import com.example.booktrack.databinding.FragmentBookInfoBinding
 import androidx.navigation.fragment.findNavController
+import com.example.booktrack.data.dao.BookDao
+import com.example.booktrack.data.dao.ReviewDao
+import com.example.booktrack.data.database.AppDatabase
+import kotlinx.coroutines.launch
 
 class BookInfoFragment : Fragment() {
 
@@ -20,6 +25,9 @@ class BookInfoFragment : Fragment() {
     private lateinit var description: String
     private lateinit var coverImageFileName: String
 
+    private lateinit var bookDao: BookDao
+    private lateinit var reviewDao: ReviewDao
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +38,9 @@ class BookInfoFragment : Fragment() {
             description = args.description
             coverImageFileName = args.coverImageFileName
         }
+
+        bookDao = AppDatabase.getDatabase(requireContext()).bookDao()
+        reviewDao = AppDatabase.getDatabase(requireContext()).reviewDao()
     }
 
     override fun onCreateView(
@@ -62,8 +73,24 @@ class BookInfoFragment : Fragment() {
                 .into(binding.imageViewCover)
         }
 
+        // folosim coroutine pentru a accesa baza de date pe un thread de fundal (pt ca am suspend in Dao):
+        lifecycleScope.launch {
+            try {
+                val bookId = bookDao.getBookIdByTitle(title)
+                val ratings = reviewDao.getRatingsForBook(bookId)
+
+                val averageRating = calculateAverageRating(ratings)
+
+                // afiseaza media ratingurilor:
+                binding.textViewRating.text = "⭐ $averageRating"
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+
         binding.btnAddReview.setOnClickListener {
-            // navigheaza la CreateReviewFragment
+            // navigheaza la CreateReviewFragment:
             val action = BookInfoFragmentDirections.actionNavigationBookInfoToNavigationCreateReview(title)
             findNavController().navigate(action)
         }
@@ -78,4 +105,16 @@ class BookInfoFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun calculateAverageRating(ratings: List<Float>): Float {
+        return if (ratings.isNotEmpty()) {
+            val total = ratings.sum()
+            val average = total / ratings.size
+            // rotunjire la 2 zecimale:
+            String.format("%.2f", average).toFloat()
+        } else {
+            0f  // daca nu sunt ratinguri, returneaza 0
+        }
+    }
+
 }

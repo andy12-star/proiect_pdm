@@ -25,6 +25,9 @@ interface ReviewDao {
     @Query("SELECT * FROM review_table WHERE bookId = :bookId")
     suspend fun getReviewsWithUsers(bookId: Int): List<ReviewWithUser>
 
+    @Query("SELECT rating FROM review_table WHERE bookId = :bookId")
+    suspend fun getRatingsForBook(bookId: Int): List<Float>
+
     @Delete
     suspend fun delete(review: Review)
 
