@@ -40,9 +40,21 @@
             android:id="@+id/textViewRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:textColor="#666666"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnAddBookToBookshelf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to Bookshelf"
+            app:layout_constraintTop_toTopOf="@id/textViewAuthor"
+            app:layout_constraintBottom_toBottomOf="@id/textViewDescription"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/teal_400"
+            android:textColor="@android:color/white"/>
 
         <LinearLayout
             android:orientation="horizontal"

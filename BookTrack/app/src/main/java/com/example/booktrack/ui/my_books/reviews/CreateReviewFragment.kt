@@ -77,8 +77,6 @@ class CreateReviewFragment : Fragment() {
 
                     bookId = getBookIdFromDatabase(bookTitle) // asteapta rezultatul
 
-                    val userId = getUserIdFromAuthSystem()
-
                     val bookExists = reviewRepository.isBookExist(bookId)
                     val userExists = reviewRepository.isUserExist(userId)
 

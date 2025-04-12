@@ -20,4 +20,8 @@ class UserRepository(private val userDao: UserDao) {
         userDao.updateUser(user)
     }
 
+    suspend fun getUserById(userId: Int): User? {
+        return userDao.getUserById(userId)
+    }
+
 }

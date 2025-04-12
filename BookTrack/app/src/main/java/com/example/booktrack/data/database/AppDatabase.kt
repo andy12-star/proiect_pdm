@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import com.example.booktrack.data.dao.BookDao
 import com.example.booktrack.data.dao.NotificationDao
 import com.example.booktrack.data.dao.ReviewDao
+import com.example.booktrack.data.dao.UserBookDao
 import com.example.booktrack.data.dao.UserDao
 import com.example.booktrack.data.models.Book
 import com.example.booktrack.data.models.Notification
 import com.example.booktrack.data.models.Review
 import com.example.booktrack.data.models.User
+import com.example.booktrack.data.models.UserBook
 
-@Database(entities = [Book::class, User::class, Review::class, Notification::class], version = 1)
+@Database(entities = [Book::class, User::class, Review::class, Notification::class, UserBook::class], version = 3)
 // andreea modif in 2!!!!1
 abstract class AppDatabase : RoomDatabase() {
 
@@ -21,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun reviewDao(): ReviewDao
     abstract fun notificationDao(): NotificationDao
+    abstract fun userBookDao() : UserBookDao
 
     companion object {
         @Volatile
