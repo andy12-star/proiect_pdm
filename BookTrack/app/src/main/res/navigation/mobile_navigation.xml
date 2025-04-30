@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_navigation_my_books_to_navigation_book_info"
             app:destination="@id/navigation_book_info" />
+        <action
+            android:id="@+id/action_navigation_my_books_to_navigation_my_books_shelf"
+            app:destination="@id/navigation_my_books_shelf" />
 
     </fragment>
 
@@ -120,5 +123,29 @@
             app:destination="@id/navigation_book_info" />
     </fragment>
 
+<!--    navigare de la My Books la MyBooksShelfFragment-->
+    <fragment
+        android:id="@+id/navigation_my_books_shelf"
+        android:name="com.example.booktrack.ui.my_books.bookshelf.MyBooksShelfFragment"
+        android:label="Bookshelf"
+        tools:layout="@layout/fragment_my_books_shelves">
+
+        <argument
+            android:name="bookshelf" />
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/action_navigation_my_books_shelf_to_navigation_my_books"
+            app:destination="@id/navigation_my_books" />
+    </fragment>
+
 
 </navigation>
+
+
+<!--<argument-->
+<!--android:name="bookTitle"-->
+<!--app:argType="string"-->
+<!--android:defaultValue="" />-->
