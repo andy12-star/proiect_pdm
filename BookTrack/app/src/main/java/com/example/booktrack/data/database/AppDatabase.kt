@@ -15,7 +15,7 @@ import com.example.booktrack.data.models.Review
 import com.example.booktrack.data.models.User
 import com.example.booktrack.data.models.UserBook
 
-@Database(entities = [Book::class, User::class, Review::class, Notification::class, UserBook::class], version = 3)
+@Database(entities = [Book::class, User::class, Review::class, Notification::class, UserBook::class], version = 1)
 // andreea modif in 2!!!!1
 abstract class AppDatabase : RoomDatabase() {
 

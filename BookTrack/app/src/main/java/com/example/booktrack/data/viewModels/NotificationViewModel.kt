@@ -1,4 +1,5 @@
 import android.app.Application
+import android.util.Log
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -18,12 +19,13 @@ class NotificationViewModel(
 ) : AndroidViewModel(application) {
 
     val allNotifications: LiveData<List<Notification>> = repository.allNotifications
-
     fun insertNotification(notification: Notification) {
-        viewModelScope.launch(Dispatchers.IO) {
+        Log.d("DEBUG", "VM insertNotification: ${notification.message}")
+        viewModelScope.launch {
             repository.insert(notification)
         }
     }
+
 }
 
 

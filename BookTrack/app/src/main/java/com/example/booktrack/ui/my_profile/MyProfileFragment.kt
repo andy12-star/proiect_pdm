@@ -4,6 +4,7 @@ import NotificationViewModel
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
@@ -49,7 +50,8 @@ class MyProfileFragment : Fragment() {
         val notificationDao = AppDatabase.getDatabase(requireContext()).notificationDao()
         val notificationRepo = NotificationRepository(notificationDao)
         val notificationFactory = NotificationViewModelFactory(requireActivity().application, notificationRepo)
-        notificationViewModel = ViewModelProvider(this, notificationFactory)[NotificationViewModel::class.java]
+        notificationViewModel = ViewModelProvider(requireActivity(), notificationFactory)[NotificationViewModel::class.java]
+
 
         val userDao = AppDatabase.getDatabase(requireContext()).userDao()
         val userRepository = UserRepository(userDao)
@@ -144,7 +146,6 @@ class MyProfileFragment : Fragment() {
         }
     }
 
-
     private fun showEditDialog(
         title: String,
         key: String,
@@ -162,51 +163,50 @@ class MyProfileFragment : Fragment() {
                 val newValue = input.text.toString().trim()
 
                 if (newValue.isNotBlank()) {
-                    sharedPref.edit {
-                        putString(key, newValue)
-                        apply()
-                    }
-
                     lifecycleScope.launch {
-                        val currentEmail = sharedPref.getString("email", "") ?: return@launch
+                        val oldEmail = sharedPref.getString("email", "") ?: return@launch
                         val userDao = AppDatabase.getDatabase(requireContext()).userDao()
-                        val user = userDao.getUserByEmail(currentEmail)
+                        val user = userDao.getUserByEmail(oldEmail)
 
                         if (user != null) {
                             val updatedUser = when (key) {
                                 "username" -> user.copy(username = newValue)
-                                "email" -> {
-                                    sharedPref.edit {
-                                        putString("email", newValue)
-                                    }
-                                    user.copy(email = newValue)
-                                }
+                                "email" -> user.copy(email = newValue)
                                 else -> user
                             }
 
                             userViewModel.updateUser(updatedUser)
 
+                            // ✅ Trimitem notificare
                             val notificationMsg = when (key) {
                                 "username" -> "Username-ul a fost schimbat în $newValue"
                                 "email" -> "Emailul a fost schimbat în $newValue"
                                 else -> ""
                             }
 
+                            Log.d("DEBUG", "TRIMIT notificare: $notificationMsg")
                             notificationViewModel.insertNotification(
                                 Notification(
                                     title = "Profil actualizat",
                                     message = notificationMsg
                                 )
                             )
+
+                            // ✅ Abia ACUM actualizăm SharedPreferences
+                            sharedPref.edit {
+                                putString(key, newValue)
+                                apply()
+                            }
+
+                            targetTextView.text = "$label - $newValue"
                         }
                     }
-
-                    targetTextView.text = "$label - $newValue"
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 
 
 
@@ -238,6 +238,7 @@ class MyProfileFragment : Fragment() {
                         userViewModel.updateUser(updatedUser)
                         Toast.makeText(requireContext(), "Password updated!", Toast.LENGTH_SHORT).show()
 
+                        Log.d("DEBUG", "Insert notificare: ")
                         notificationViewModel.insertNotification(
                             Notification(
                                 title = "Parolă schimbată",

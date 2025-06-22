@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.booktrack.R
 import com.example.booktrack.data.models.Notification
+class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-class NotificationAdapter(private val notifications: List<Notification>) :
-    RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
+    private var notifications: List<Notification> = emptyList()
 
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.notificationTitle)
@@ -29,4 +29,9 @@ class NotificationAdapter(private val notifications: List<Notification>) :
     }
 
     override fun getItemCount() = notifications.size
+
+    fun updateData(newList: List<Notification>) {
+        notifications = newList
+        notifyDataSetChanged()
+    }
 }
