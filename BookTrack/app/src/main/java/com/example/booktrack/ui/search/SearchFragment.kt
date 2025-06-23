@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.booktrack.R
 import com.example.booktrack.data.database.AppDatabase
+import com.example.booktrack.data.models.Book
 import com.example.booktrack.databinding.FragmentSearchBinding
 import com.example.booktrack.ui.my_books.BookAdapter
 import kotlinx.coroutines.flow.first
@@ -34,6 +36,8 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    private lateinit var allBooks: List<Book>
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -45,13 +49,13 @@ class SearchFragment : Fragment() {
                     title = selectedBook.title,
                     author = selectedBook.author,
                     description = selectedBook.description,
-                            coverImageFileName = selectedBook.coverImageFileName
+                    coverImageFileName = selectedBook.coverImageFileName
                 )
             findNavController().navigate(action)
         }
 
         genreAdapter = GenreAdapter(
-            genres = resources.getStringArray(com.example.booktrack.R.array.book_genres).toList().drop(1)
+            genres = resources.getStringArray(R.array.book_genres).toList().drop(1)
         ) { selectedGenre ->
             val action = SearchFragmentDirections
                 .actionSearchFragmentToGenreBooksFragment(selectedGenre)
@@ -64,40 +68,42 @@ class SearchFragment : Fragment() {
         binding.recyclerViewBooks.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewBooks.adapter = bookAdapter
 
-        binding.recyclerViewGenres.visibility = View.VISIBLE
-        binding.recyclerViewBooks.visibility = View.GONE
+        binding.buttonBackToGenres.setOnClickListener {
+            binding.recyclerViewGenres.visibility = View.VISIBLE
+            binding.recyclerViewBooks.visibility = View.GONE
+            binding.buttonBackToGenres.visibility = View.GONE
 
+        }
+        binding.textViewNoResults.visibility = View.GONE
 
         lifecycleScope.launch {
-            val allBooks = bookDao.getAllBooks().first()
+            allBooks = bookDao.getAllBooks().first()
+        }
 
-            bookAdapter.submitList(allBooks)
-
-            binding.searchBar.setOnEditorActionListener { _, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                    (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
-
-                    val query = binding.searchBar.text.toString().trim()
-
-                    val filteredBooks = allBooks.filter { book ->
-                        book.title.contains(query, ignoreCase = true) || book.author.contains(query, ignoreCase = true)
-                    }
-
-                    bookAdapter.submitList(filteredBooks)
-
-                    // Afișăm doar lista de cărți
-                    binding.recyclerViewBooks.visibility = View.VISIBLE
-                    binding.recyclerViewGenres.visibility = View.GONE
-
-                    true
-                } else {
-                    false
+        binding.searchBar.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                val query = binding.searchBar.text.toString().trim()
+                val filteredBooks = allBooks.filter { book ->
+                    book.title.contains(query, ignoreCase = true) || book.author.contains(query, ignoreCase = true)
                 }
-            }
 
+                bookAdapter.submitList(filteredBooks)
+
+                binding.recyclerViewBooks.visibility = View.VISIBLE
+                binding.recyclerViewGenres.visibility = View.GONE
+                binding.buttonBackToGenres.visibility = View.VISIBLE
+
+                binding.textViewNoResults.visibility =
+                    if (filteredBooks.isEmpty()) View.VISIBLE else View.GONE
+
+                true
+            } else false
 
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
