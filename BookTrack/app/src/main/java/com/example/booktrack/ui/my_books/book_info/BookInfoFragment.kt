@@ -1,5 +1,6 @@
 package com.example.booktrack.ui.my_books.book_info
 
+import NotificationViewModel
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +26,9 @@ import com.example.booktrack.data.viewModels.UserViewModelFactory
 import com.example.booktrack.ui.my_books.user_book.UserBookViewModel
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.example.booktrack.data.models.Notification
+import com.example.booktrack.data.repositories.NotificationRepository
+import com.example.booktrack.data.viewModels.NotificationViewModelFactory
 
 class BookInfoFragment : Fragment() {
 
@@ -44,6 +48,8 @@ class BookInfoFragment : Fragment() {
 
     private lateinit var userViewModel: UserViewModel
     lateinit var userBookViewModel: UserBookViewModel
+
+    lateinit var notificationViewModel: NotificationViewModel
 
 //    private var currentUser: User? = null
 
@@ -84,6 +90,12 @@ class BookInfoFragment : Fragment() {
 
         userViewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
         userBookViewModel = ViewModelProvider(this).get(UserBookViewModel::class.java)
+
+        val notificationDao = AppDatabase.getDatabase(requireContext()).notificationDao()
+        val notificationRepo = NotificationRepository(notificationDao)
+        val notificationFactory = NotificationViewModelFactory(requireActivity().application, notificationRepo)
+        notificationViewModel = ViewModelProvider(requireActivity(), notificationFactory)[NotificationViewModel::class.java]
+
 
 
         binding.textViewTitle.text = title
@@ -188,6 +200,17 @@ class BookInfoFragment : Fragment() {
             // inseram in DB:
             lifecycleScope.launch {
                 userBookViewModel.insert(userBook)
+
+                val book = bookDao.getBookById(bookId)
+                val bookTitle = book?.title ?: "Carte"
+
+                notificationViewModel.insertNotification(
+                    Notification(
+                        title = "Carte adăugată în raft",
+                        message = "Cartea \"$bookTitle\" a fost adăugată în raftul \"$selectedBookshelf\""
+                    )
+                )
+
 
                 // actualizam textul butonului:
                 button.text = "$selectedBookshelf"
