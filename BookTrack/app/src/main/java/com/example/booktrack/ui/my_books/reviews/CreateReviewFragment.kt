@@ -1,5 +1,6 @@
 package com.example.booktrack.ui.my_books.reviews
 
+import NotificationViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.booktrack.data.models.Review
 import com.example.booktrack.data.repositories.ReviewRepository
 import com.example.booktrack.databinding.FragmentCreateReviewBinding
@@ -21,6 +23,9 @@ import com.example.booktrack.data.dao.ReviewDao
 import com.example.booktrack.data.database.AppDatabase
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
+import com.example.booktrack.data.models.Notification
+import com.example.booktrack.data.repositories.NotificationRepository
+import com.example.booktrack.data.viewModels.NotificationViewModelFactory
 import kotlinx.coroutines.launch
 
 class CreateReviewFragment : Fragment() {
@@ -29,6 +34,8 @@ class CreateReviewFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var reviewRepository: ReviewRepository
+    private lateinit var notificationViewModel: NotificationViewModel
+
 
     private var bookId: Int = 0 // Book ID primit de la BookInfoFragment
     private var userId: Int = 0
@@ -40,6 +47,12 @@ class CreateReviewFragment : Fragment() {
         _binding = FragmentCreateReviewBinding.inflate(inflater, container, false)
 
         val db = AppDatabase.getDatabase(requireContext())
+
+        val notificationDao = db.notificationDao()
+        val notificationRepo = NotificationRepository(notificationDao)
+        val notificationFactory = NotificationViewModelFactory(requireActivity().application, notificationRepo)
+        notificationViewModel = ViewModelProvider(requireActivity(), notificationFactory)[NotificationViewModel::class.java]
+
 
         // obtine DAO-ul din baza de date
         val reviewDao = db.reviewDao()
@@ -90,6 +103,14 @@ class CreateReviewFragment : Fragment() {
                         )
 
                         reviewRepository.insertReview(review)
+
+                        notificationViewModel.insertNotification(
+                            Notification(
+                                title = "Review adăugat",
+                                message = "Ai adăugat un review pentru cartea \"$bookTitle\""
+                            )
+                        )
+
                         Toast.makeText(requireContext(), "Review submitted: $reviewText", Toast.LENGTH_SHORT).show()
                         requireActivity().onBackPressed()
                     } else {
