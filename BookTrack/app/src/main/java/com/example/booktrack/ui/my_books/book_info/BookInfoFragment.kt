@@ -84,6 +84,16 @@ class BookInfoFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
+        val role = requireContext()
+            .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .getString("role", "user")
+
+        if (role == "admin") {
+            binding.btnAddReview.visibility = View.GONE
+            binding.btnAddBookToBookshelf.visibility = View.GONE
+        }
+
+
         val userDao = AppDatabase.getDatabase(requireContext()).userDao()
         val userRepository = UserRepository(userDao)
         val factory = UserViewModelFactory(requireActivity().application, userRepository)

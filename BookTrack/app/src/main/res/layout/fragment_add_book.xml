@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/imageViewCover"
         android:layout_width="150dp"
+        android:layout_marginTop="80dp"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_my_books"

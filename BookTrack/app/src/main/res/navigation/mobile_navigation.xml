@@ -5,6 +5,13 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_my_books">
 
+
+    <fragment
+        android:id="@+id/adminSetupFragment"
+        android:name="com.example.booktrack.ui.AdminSetupFragment"
+        android:label="Admin Setup"
+        tools:layout="@android:color/transparent" />
+
     <fragment
         android:id="@+id/navigation_my_books"
         android:name="com.example.booktrack.ui.my_books.MyBooksFragment"

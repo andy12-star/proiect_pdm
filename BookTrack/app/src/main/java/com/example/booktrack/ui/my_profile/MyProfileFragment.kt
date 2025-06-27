@@ -60,6 +60,13 @@ class MyProfileFragment : Fragment() {
         sharedPref = requireContext().getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
 
         updateUserData()
+        val role = sharedPref.getString("role", "user")
+        if (role == "admin") {
+            binding.btnEditUsername.visibility = View.GONE
+            binding.btnEditEmail.visibility = View.GONE
+            binding.btnChangePassword.visibility = View.GONE
+            binding.btnDeleteAccount.visibility = View.GONE
+        }
 
         binding.btnEditUsername.setOnClickListener {
             showEditDialog("Edit Username", "username", binding.textUsername, "Username", userViewModel)

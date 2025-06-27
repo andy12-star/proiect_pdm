@@ -9,6 +9,7 @@ import com.example.booktrack.data.database.AppDatabase
 import com.example.booktrack.data.repositories.UserRepository
 import com.example.booktrack.data.viewModels.UserViewModel
 import com.example.booktrack.databinding.ActivityLoginBinding
+import com.example.booktrack.ui.AdminSetupFragment
 import kotlinx.coroutines.launch
 import com.example.booktrack.utils.HashUtils
 
@@ -33,6 +34,17 @@ class LoginActivity:AppCompatActivity() {
         // daca nu e logat, atunci login
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val setupPrefs = getSharedPreferences("admin_setup", MODE_PRIVATE)
+        val isAdminCreated = setupPrefs.getBoolean("is_admin_created", false)
+
+        if (!isAdminCreated) {
+            supportFragmentManager.beginTransaction()
+                .replace(android.R.id.content, AdminSetupFragment())
+                .commit()
+            return
+        }
+
 
         val userDao = AppDatabase.getDatabase(application).userDao()
         val repository = UserRepository(userDao)
@@ -73,16 +85,17 @@ class LoginActivity:AppCompatActivity() {
                         putString("username", user.username)
                         putString("email", user.email)
                         putInt("user_id", user.id)
+                        putString("role", user.role.lowercase()) // 👈 ADĂUGAT AICI
                         apply()
                     }
 
                     startActivity(intent)
-
                     finish()
                 } else {
                     Toast.makeText(this@LoginActivity, "Invalid email or password", Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
 
 

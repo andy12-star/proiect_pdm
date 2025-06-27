@@ -46,52 +46,44 @@ class MyBooksFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
-        // seteaza adapterul pentru RecyclerView:
+        val role = requireContext()
+            .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .getString("role", "user")
+
+        if (role == "admin") {
+
+            binding.bookshelfButtonsLayout.visibility = View.GONE
+        }
+
         bookAdapter = BookAdapter { selectedBook ->
             val action = MyBooksFragmentDirections
                 .actionNavigationMyBooksToNavigationBookInfo(
                     title = selectedBook.title,
                     author = selectedBook.author,
                     description = selectedBook.description,
-                    coverImageFileName = selectedBook.coverImageFileName // adaugat
+                    coverImageFileName = selectedBook.coverImageFileName
                 )
-
             findNavController().navigate(action)
         }
 
-
         binding.recyclerViewBooks.layoutManager = LinearLayoutManager(requireContext())
-
         binding.recyclerViewBooks.adapter = bookAdapter
 
-        // observa LiveData pentru actualizarea listei de carti
         myBooksViewModel.allBooks.observe(viewLifecycleOwner) { books ->
-
             bookAdapter.submitList(books.toList())
-//            bookAdapter.notifyDataSetChanged()
         }
 
-        // seteaza click pe FloatingActionButton
         binding.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_my_books_to_navigation_add_book)
         }
 
-        binding.btnToRead.setOnClickListener {
-            navigateToShelf("to-read")
-        }
-
-        binding.btnReading.setOnClickListener {
-            navigateToShelf("reading")
-        }
-
-        binding.btnRead.setOnClickListener {
-            navigateToShelf("read")
-        }
-
+        binding.btnToRead.setOnClickListener { navigateToShelf("to-read") }
+        binding.btnReading.setOnClickListener { navigateToShelf("reading") }
+        binding.btnRead.setOnClickListener { navigateToShelf("read") }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
